@@ -62,7 +62,11 @@
                   <td>{{ user.name }}</td>
                   <td>{{ user.email }}</td>
                   <td>{{ user.phone }}</td>
-                  <td>{{ user.status }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="[user.status === 'ACTIVE' ? ' bg-success' : '', user.status === 'PENDING' ? ' bg-primary' : '', user.status === 'INACTIVE' ? ' bg-info' : '', user.status === 'BANNED' ? ' bg-danger' : '']">
+                      {{ user.status }}
+                    </span>
+                  </td>
                   <td>{{ user.address }}</td>
                   </tr>
               </tbody>
@@ -70,9 +74,12 @@
             <nav aria-label="Page navigation example">
               <ul class="pagination justify-content-end">
                 <li class="page-item"><a class="page-link" href="#">&laquo; Previous </a></li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <!-- another way to do this if you do not want a constructor is to create a custom pipe that can take number & create an array out of it -->
+                <li *ngFor="let pageNumber of [].constructor(state.appData.data.page.totalPages); let i= index;" class="page-item">
+                  <a (click)="gotToPage('', i)" class="page-link">
+                    {{ i + 1 }}
+                  </a>
+                </li>
                 <li class="page-item"><a class="page-link" href="#">Next &raquo;</a></li>
               </ul>
             </nav>
