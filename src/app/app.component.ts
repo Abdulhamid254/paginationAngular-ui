@@ -13,6 +13,8 @@ import { UserService } from './service/user.service';
 export class AppComponent {
   usersState$: Observable<{ appState: string, appData?: ApiResponse<Page>, error?: HttpErrorResponse }>;
   responseSubject = new BehaviorSubject<ApiResponse<Page>>(null);
+  private currentPageSubject = new BehaviorSubject<number>(0);
+  currentPage$ = this.currentPageSubject.asObservable();
 
 // wont fire here bcoz we havent subscribed to this observable in our case we used async pipe
   constructor(private userSevice: UserService) { }
@@ -22,6 +24,7 @@ export class AppComponent {
       map((response: ApiResponse<Page>) => {
         // this behavioursubject contains our response
         this.responseSubject.next(response);
+        this.currentPageSubject.next(response.data.page.number);
         console.log(response);
         // now thatt the app is loaded the appstate cannot be empty
         return ({ appState: 'APP_LOADED', appData: response });
@@ -42,6 +45,7 @@ export class AppComponent {
     this.usersState$ = this.userSevice.users$(name, pageNumber).pipe(
       map((response: ApiResponse<Page>) => {
         this.responseSubject.next(response);
+         this.currentPageSubject.next(pageNumber);
         console.log(response);
         return ({ appState: 'APP_LOADED', appData: response });
       }),
